@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday For You</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff4d6d;
+            --bg-dark: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Background Animation */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Glass Card */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+            max-width: 600px;
+            width: 100%;
+            transform: translateY(50px);
+            opacity: 0;
+            transition: 1.5s all ease;
+        }
+
+        .card.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid var(--primary-color);
+            margin-bottom: 20px;
+            object-fit: cover;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ff4d6d, #ff8fa3);
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .quote {
+            font-size: 1rem;
+            color: #ffe4e5;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 15px;
+            font-style: italic;
+            letter-spacing: 0.3px;
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 25px;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .message {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+
+            #countdown {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .time-box {
+                min-width: 50px;
+                padding: 8px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.95rem;
+            }
+
+            .profile-img {
+                width: 125px;
+                height: 125px;
+            }
+        }
+
+        /* Countdown Style */
+        #countdown {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .time-box {
+            background: var(--primary-color);
+            padding: 10px;
+            border-radius: 8px;
+            min-width: 60px;
+        }
+
+        .time-box span {
+            display: block;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Button */
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Audio Player hidden */
+        #music-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+        }
+
+        /* Surprise Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .modal-content {
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(255, 77, 109, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            width: min(90%, 420px);
+            text-align: center;
+            color: #fff;
+            animation: fadeIn 0.4s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 12px;
+            color: #ff8fa3;
+        }
+
+        .modal-content p {
+            color: #eee;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .gallery {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 14px 0;
+        }
+
+        .gallery img {
+            width: 100%;
+            max-width: 420px;
+            border-radius: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .caption {
+            margin-bottom: 14px;
+            color: #ffd4e1;
+        }
+
+        .modal-content .close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            color: #fff;
+            font-size: 1.6rem;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-js"></div>
+
+    <div class="container">
+        <div class="card" id="mainCard">
+            <img src="satu.jpeg" alt="Foto Dia" class="profile-img">
+            
+            <h1 id="headline">Happy Birthday, Sayang!</h1>
+            
+            <div id="countdown">
+                <div class="time-box"><span id="days">00</span>Hari</div>
+                <div class="time-box"><span id="hours">00</span>Jam</div>
+                <div class="time-box"><span id="mins">00</span>Men</div>
+                <div class="time-box"><span id="secs">00</span>Det</div>
+            </div>
+
+            <p class="message" id="typing-text"></p>
+
+            <p class="quote">"Di setiap denyut nadamu, aku temukan rumah yang damai. Di setiap senyummu, aku percaya bahwa kata 'selamanya' bukan sekadar kata, tapi janji yang ingin kujaga selamanya."</p>
+            
+            <button class="btn" onclick="playMusic()">Klik Untuk Kejutan</button>
+        </div>
+    </div>
+
+    <div id="surpriseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSurprise()">&times;</span>
+            <h2>Surprise!</h2>
+            <p>Ini adalah momen-momen terindah kita. Geser foto untuk melihat lebih banyak kenangan.</p>
+
+            <div class="gallery">
+                <button class="nav-btn" onclick="changeSlide(-1)">&#10094;</button>
+                <img id="surpriseImage" src="dua.jpeg" alt="Momen Spesial">
+                <button class="nav-btn" onclick="changeSlide(1)">&#10095;</button>
+            </div>
+
+            <p id="photoCaption" class="caption">Foto 1: Saat pertama kali bertemu, senyum yang tak pernah pudar.</p>
+            <button class="btn" onclick="closeSurprise()">Tutup</button>
+        </div>
+    </div>
+
+    <audio id="birthdaySong" loop>
+        <source src="ytmp3free.cc_brian-rahmattio-happy-birthday-official-lyrics-video-youtubemp3free.org.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // 1. Initialize Particles (Efek Bintang/Hati)
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#ff4d6d" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3 },
+                "move": { "enable": true, "speed": 2 }
+            }
+        });
+
+        // 2. Typing Effect
+        const text = "Di hari spesial ini, aku cuma mau bilang terima kasih sudah ada. Sebagai Mamas kamu, mungkin aku nggak pandai ngerangkai kata secara langsung, tapi lewat kode ini, aku ingin kamu tahu kalau kamu berharga. Selamat ulang tahun yang ke - 22 tanggal 9 April 2026!";
+        let index = 0;
+
+        function typeWriter() {
+            if (index < text.length) {
+                document.getElementById("typing-text").innerHTML += text.charAt(index);
+                index++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+
+        // 3. Countdown Timer (Target: 9 April 2026)
+        const targetDate = new Date("April 9, 2026 00:00:00").getTime();
+
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerHTML = d;
+            document.getElementById("hours").innerHTML = h;
+            document.getElementById("mins").innerHTML = m;
+            document.getElementById("secs").innerHTML = s;
+        }, 1000);
+
+        // 4. Music and Interaction
+        function playMusic() {
+            const audio = document.getElementById("birthdaySong");
+            audio.play();
+            const modal = document.getElementById("surpriseModal");
+            modal.style.display = "flex";
+        }
+
+        let currentSlide = 0;
+        const slides = [
+            {
+                src: "dua.jpeg",
+                caption: "Momen pertama kita bersama, saat hati mulai saling terhubung dalam kehangatan cinta."
+            },
+            {
+                src: "tiga.jpeg",
+                caption: "Kenangan manis di hari-hari bahagia, selalu ada kamu yang membuat dunia ini lebih indah."
+            },
+            {
+                src: "empat.jpeg",
+                caption: "Mimpi masa depan kita, penuh cinta, harapan, dan janji untuk selalu bersama."
+            }
+        ];
+
+        function setSlide(index) {
+            const mod = document.getElementById("surpriseModal");
+            const image = document.getElementById("surpriseImage");
+            const captionEl = document.getElementById("photoCaption");
+
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+
+            currentSlide = index;
+            image.src = slides[currentSlide].src;
+            captionEl.textContent = slides[currentSlide].caption;
+
+            mod.style.display = "flex";
+        }
+
+        function changeSlide(direction) {
+            setSlide(currentSlide + direction);
+        }
+
+        function playMusic() {
+            const audio = document.getElementById("birthdaySong");
+            audio.play();
+            setSlide(0);
+        }
+
+        function closeSurprise() {
+            const audio = document.getElementById("birthdaySong");
+            audio.pause();
+            audio.currentTime = 0;
+            document.getElementById("surpriseModal").style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById("surpriseModal");
+            if (event.target === modal) {
+                closeSurprise();
+            }
+        };
+
+        // Show card on load
+        window.onload = () => {
+            document.getElementById("mainCard").classList.add("active");
+            setTimeout(typeWriter, 1000);
+        };
+    </script>
+</body>
+</html>
